@@ -83,7 +83,7 @@
   \texttt{InferenceData}. It also provides functions to plot the results ---using
   matplotlib or bokeh---, calculate relevant diagnostics or perform model checing.
   We therefore hope ArviZ will become a key tool in Bayesian analysis by
-  providing users with computational tools to explore their results and to
+  providing users with computational tools to analyze and explore their results and to
   compare between different probabilistic programming libraries.
 \end{abstract}
 
@@ -91,16 +91,15 @@
 
 \section{Introduction}
 The growth of both probabilistic programming languages and algorithms for the
-analysis of Bayesian inference results led to the introduction of
-ArviZ~\cite{arviz2019}. ArviZ covers the aspects of Bayesian analysis outside
-inference itself. ArviZ aims to ease the use of a robust Bayesian workflow and
-cutting edge diagnostics so users can concentrate on domain specific
-knowledge.
+analysis of Bayesian inference results led to the introduction of the Python
+library ArviZ~\cite{arviz2019}. Outside inference itself and sampling, ArviZ covers
+all the other aspects of Bayesian analysis. It aims to ease the use of a robust
+Bayesian workflow and cutting edge diagnostics so users can concentrate on domain
+specific knowledge.
+
 Following the structure of ArviZ's source code itself, this
 paper divides all these tasks into 3 categories, each of which has its own
-section.
-
-Section~\ref{sec:data} is about data storage of Bayesian inference
+section. Section~\ref{sec:data} is about data storage of Bayesian inference
 results. Our goal is to define a storage schema compatible with
 netCDF~\cite{unidata2011network}. This data structure should contain all
 relevant information to
@@ -110,7 +109,7 @@ plotting functions implemented in ArviZ respectively.
 
 \section{Data storage scheme}\label{sec:data}
 One of ArviZ key features is its data storage scheme using
-\texttt{InferenceData} objects. \texttt{InferenceData} objects (built on
+\texttt{InferenceData} objects. \texttt{InferenceData} (built on
 top of xarray~\cite{hoyer2017xarray}) contain several groups, each of which is
 a multidimensional labeled array with one or several data variables
 (Figure~\ref{fig:data}).
@@ -118,32 +117,33 @@ a multidimensional labeled array with one or several data variables
 \begin{figure}[!hbt]
   \centering
   \includegraphics[width=0.6\linewidth]{InferenceDataStructure.png}
-  \caption{Visual representation of \texttt{InferenceData}
+  \caption{Visual representation of the \texttt{InferenceData}
   structure.}\label{fig:data}
 \end{figure}
 
 These groups are thought to contain a specific quantity such as \emph{posterior},
 \emph{observed data} or \emph{sampler stats} (sampler quantities like
-divergencies or tree depth, currently, the pointwise log likelihood is
-stored here too). Groups in \texttt{InferenceData} directly translate to
+divergencies, tree depth, or log likelihood). Groups in \texttt{InferenceData}
+directly translate to
 groups defined in netCDF files, making the storage of \texttt{InferenceData}
 objects in netCDF files straightforward. The full schema specification
-can be found at ArviZ
+can be found on ArviZ
 documentation\footnote{\url{https://arviz-devs.github.io/arviz/schema/schema.html}}.
 
-\texttt{InferenceData} objects are central to ArviZ, most of ArviZ functions
+\texttt{InferenceData} objects are central to ArviZ, most ArviZ functions
 take \texttt{InferenceData} as input. Therefore, we provide native functions
 to convert between the outputs of several inference libraries and
 \texttt{InferenceData}. Table~\ref{tab:from_xyz} shows the state of
 converter functions in ArviZ beta release 0.6.1 (latest release to date).
-Currently supported libraries are PyStan, CmdStan and CmdStanPy
+Natively supported libraries are PyStan, CmdStan and CmdStanPy
 \cite{stan2018language, stan2018math, stan2018core, pystan2018}, % chktex 2
 PyMC3~\cite{pymc32016}, Pyro and NumPyro~\cite{pyro2018},
 emcee~\cite{emcee2013, emcee2019} and
-TensorFlow Probability~\cite{tensorflow_probability2017}.
+TensorFlow Probability~\cite{tensorflow_probability2017}. In addition, there
+is also a function to convert dictionaries to \texttt{InferenceData}.
 
 \begin{table}[!ht]
-  \caption{ArviZ converter function summary}\label{tab:from_xyz}
+  \caption{ArviZ converter functions summary}\label{tab:from_xyz}
   \begin{tabular}{ccccc}
     \toprule
     Inference Library&Sampler Stats&Posterior predictive&Observed data&Prior\\
@@ -168,16 +168,17 @@ TensorFlow Probability~\cite{tensorflow_probability2017}.
 All data currenlty stored in \texttt{InferenceData} is related to the Bayesian
 inference run itself, either directly or indirectly. For example, posterior
 predictive samples stored are intended for model checking and therefore do not
-support predictions which would be out of sample posterior predictive samples.
-We are still working in the \texttt{InferenceData} scheme in order to support
-storage of predictions and to also store the arguments passed to the sampler
-call as well as the kind of sampler.
+really support posterior predictive samples intended for prediction.
+We are still working on the \texttt{InferenceData} scheme with two main goals
+in mind, support the storage of predictions, and storage of the arguments used
+when calling the sampler as well as the kind of sampler. This latter goal
+would allow to reproduce the sampling given the \texttt{InferenceData} object.
 
 \section{Statistics and diagnostics}\label{sec:stats}
-ArviZ includes the most common statistics and diagnostics for Bayesian
+ArviZ includes many statistics and diagnostics for Bayesian
 analysis such as the Gelman-Rubin statistic~\cite{gelman1992rhat} or the
-Watanabe-Akaike Information Criterion~\cite{watanabe2010waic}.
-We strive to provide sensible default for all algorithms and to
+widely applicable Information Criterion~\cite{watanabe2010waic}.
+We strive to provide sensible defaults for all algorithms and to
 keep them up to date with the latest publications. Moreover,
 Numba~\cite{lam2015numba} is used to
 speed up lengthy calculations.
@@ -186,17 +187,18 @@ speed up lengthy calculations.
 Many convergence assessment functions are available in ArviZ.
 \texttt{az.rhat}, \texttt{az.ess} and \texttt{az.mcse}
 implement the Gelman-Rubin statistic, effective sample size and Monte Carlo
-Standard Error respectively \cite{gelman1992rhat, gelman2013bayesian}. % chktex 2
+standard error respectively \cite{gelman1992rhat, gelman2013bayesian}. % chktex 2
 The improvements in \citet{vehtari2019rank} have already been added to
 ArviZ and made the default for all 3 functions. Moreover, all 3 functions take
-as input the method to be used for the calculation. For example, the effective
-sample size can be calculated for the bulk or for quantiles and with or without
-rank normalization. \texttt{az.bfmi} can be used to calculate Bayesian fraction
+as input a method to choose between the available versions of the algorithms.
+For example, the effective sample size can be calculated for the bulk or for
+quantiles and with or without rank normalization.
+\texttt{az.bfmi} can be used to calculate Bayesian fraction
 of missing information~\cite{betancourt2016diagnosing}. \texttt{az.geweke}
 implements the z-scores for convergence diagnostics~\cite{geweke1991evaluating}.
 
 An \texttt{az.summary} function is also provided for convenience to calculate
-several diagnostics and statistics such as mean and variance at the same time.
+several diagnostics and also statistics such as mean or variance.
 Its output can be directly printed in a readable manner.
 
 \subsection{Model comparison}
