@@ -93,8 +93,12 @@
 The growth of both probabilistic programming languages and algorithms for the
 analysis of Bayesian inference results led to the introduction of the Python
 library ArviZ~\cite{arviz2019}. Outside inference itself and sampling, ArviZ covers
-all the other aspects of Bayesian analysis. It aims to ease the use of a robust
-Bayesian workflow and cutting edge diagnostics so users can concentrate on domain
+all the other aspects of Bayesian analysis. These tasks such as diagnoses of
+the quality of the inference, model criticism or preparation of the results
+for a particular audience are also key to the modelling process and
+require both numerical and visual tools. ArviZ aims to
+ease the use of a robust
+Bayesian workflow so users can concentrate on domain
 specific knowledge.
 
 Following the structure of ArviZ's source code itself, this
@@ -121,12 +125,12 @@ a multidimensional labeled array with one or several data variables
   structure.}\label{fig:data}
 \end{figure}
 
-These groups are thought to contain a specific quantity such as \emph{posterior},
+These groups contain a specific quantity such as \emph{posterior},
 \emph{observed data} or \emph{sampler stats} (sampler quantities like
 divergencies, tree depth, or log likelihood). Groups in \texttt{InferenceData}
 directly translate to
 groups defined in netCDF files, making the storage of \texttt{InferenceData}
-objects in netCDF files straightforward. The full schema specification
+as netCDF files straightforward. The full schema specification
 can be found on ArviZ
 documentation\footnote{\url{https://arviz-devs.github.io/arviz/schema/schema.html}}.
 
@@ -165,10 +169,6 @@ is also a function to convert dictionaries to \texttt{InferenceData}.
 \end{tabular}
 \end{table}
 
-All data currenlty stored in \texttt{InferenceData} is related to the Bayesian
-inference run itself, either directly or indirectly. For example, posterior
-predictive samples stored are intended for model checking and therefore do not
-really support posterior predictive samples intended for prediction.
 We are still working on the \texttt{InferenceData} scheme with two main goals
 in mind, support the storage of predictions, and storage of the arguments used
 when calling the sampler as well as the kind of sampler. This latter goal
@@ -189,7 +189,7 @@ Many convergence assessment functions are available in ArviZ.
 implement the Gelman-Rubin statistic, effective sample size and Monte Carlo
 standard error respectively \cite{gelman1992rhat, gelman2013bayesian}. % chktex 2
 The improvements in \citet{vehtari2019rank} have already been added to
-ArviZ and made the default for all 3 functions. Moreover, all 3 functions take
+ArviZ and have been made the default for all 3 functions. Moreover, all 3 functions take
 as input a method to choose between the available versions of the algorithms.
 For example, the effective sample size can be calculated for the bulk or for
 quantiles and with or without rank normalization.
@@ -198,7 +198,7 @@ of missing information~\cite{betancourt2016diagnosing}. \texttt{az.geweke}
 implements the z-scores for convergence diagnostics~\cite{geweke1991evaluating}.
 
 An \texttt{az.summary} function is also provided for convenience to calculate
-several diagnostics and also statistics such as mean or variance.
+several diagnostics toghether with statistics such as mean or variance.
 Its output can be directly printed in a readable manner.
 
 \subsection{Model comparison}
@@ -217,13 +217,15 @@ models at the same time, effectively comparing them in a single line of code.
 \subsection{Model checking}
 One algorithm for model checking, \texttt{az.loo\_pit}, has also been implemented
 recently, the leave
-one out cross validation pareto integrated transform
+one out cross validation probability integral transform
 (LOO-PIT)~\cite{gabry2019visualization}. This has been possible thanks to the
 versatility of \texttt{InferenceData}, which contains all the quantities
 needed for this calculation: observed data, posterior predictive samples and
 log likelihood data. It should be noted that the LOO-PIT result is generally
-analyzed visually in a qualitative way, this can be also done in ArviZ using
-native plotting functions. In addition, the results from \texttt{az.loo} and
+analyzed visually in a qualitative way. This can alse be done in ArviZ using
+native plotting functions.
+
+In addition, the results from \texttt{az.loo} and
 \texttt{az.waic} can also be used for model checking to some extent.
 
 \section{Data visualization}\label{sec:plots}
