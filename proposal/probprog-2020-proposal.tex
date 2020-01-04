@@ -73,17 +73,22 @@
 % \email{j.vandemeent@northeastern.edu}
 
 \author{Osvaldo Martin}
+\affiliation{
+  \institution{Instituto de Matem\'atica Aplicada San Luis, UNSL-CONICET}
+  \city{San Luis}
+  \country{Argentina}
+}
+\email{aloctavodia@gmail.com}
 
 \begin{abstract}
-  Probabilistic programming is an emerging field of growing importance. In
-  recent years, many libraries have been built to write probabilistic models
+  In recent years, many libraries have been built to specify probabilistic models
   as executable code. ArviZ proposes the use of a common data structure called
-  \texttt{InferenceData} to ease the analysis of the results. To this end,
+  \texttt{InferenceData} to ease and unify common types of analysese of these models. To this end,
   ArviZ converts results from several libraries to
-  \texttt{InferenceData}. It also provides functions to plot the results ---using
-  matplotlib or bokeh---, calculate relevant diagnostics or perform model checing.
+  \texttt{InferenceData}. It also provides functions to flexibly plot the results using different
+  libraries, calculate relevant diagnostics, or perform model checking.
   We therefore hope ArviZ will become a key tool in Bayesian analysis by
-  providing users with computational tools to analyze and explore their results and to
+  providing users with computational tools to analyze and explore their results, and to
   compare between different probabilistic programming libraries.
 \end{abstract}
 
@@ -93,28 +98,31 @@
 The growth of both probabilistic programming languages and algorithms for the
 analysis of Bayesian inference results led to the introduction of the Python
 library ArviZ~\cite{arviz2019}. Outside inference itself and sampling, ArviZ covers
-all the other aspects of Bayesian analysis. These tasks such as diagnoses of
+all the other aspects of Bayesian analysis. These tasks ---such as diagnoses of
 the quality of the inference, model criticism or preparation of the results
-for a particular audience are also key to the modelling process and
+for a particular audience--- are also key to the modelling process and
 require both numerical and visual tools. ArviZ aims to
 ease the use of a robust
 Bayesian workflow so users can concentrate on domain
-specific knowledge.
+specific questions.
 
 Following the structure of ArviZ's source code itself, this
-paper divides all these tasks into 3 categories, each of which has its own
+paper divides these tasks into 3 categories, each of which has its own
 section. Section~\ref{sec:data} is about data storage of Bayesian inference
-results. Our goal is to define a storage schema compatible with
-netCDF~\cite{unidata2011network}. This data structure should contain all
-relevant information to
-perform diagnostics on the inference run or to reproduce it.
-Sections~\ref{sec:stats}~and~\ref{sec:plots} outline the algorithms and
-plotting functions implemented in ArviZ respectively.
+results.
+Section~\ref{sec:stats}~ outlines the statistical and diagnostic algorithms
+provided by ArviZ, while section~\ref{sec:plots} provides an overview of
+plotting functions implemented in ArviZ.
 
-\section{Data storage scheme}\label{sec:data}
-One of ArviZ key features is its data storage scheme using
-\texttt{InferenceData} objects. \texttt{InferenceData} (built on
-top of xarray~\cite{hoyer2017xarray}) contain several groups, each of which is
+\section{Data storage schema}\label{sec:data}
+One of ArviZ's key features is its data storage schema. Our goal is to define
+a storage schema compatible
+with netCDF~\cite{unidata2011network}. This data structure, called
+\texttt{InferenceData}, should contain all
+relevant information to perform diagnostics on the inference run or to reproduce
+it.
+\texttt{InferenceData} (built on
+top of xarray~\cite{hoyer2017xarray}) contains several groups, each of which is
 a multidimensional labeled array with one or several data variables
 (Figure~\ref{fig:data}).
 
@@ -125,14 +133,14 @@ a multidimensional labeled array with one or several data variables
   structure.}\label{fig:data}
 \end{figure}
 
-These groups contain a specific quantity such as \emph{posterior},
-\emph{observed data} or \emph{sampler stats} (sampler quantities like
-divergencies, tree depth, or log likelihood). Groups in \texttt{InferenceData}
+These groups contain data related to a specific collection such as \emph{posterior},
+\emph{observed data}, or \emph{sampler stats} (sampler quantities like
+divergences, tree depth, or log likelihood). Groups in \texttt{InferenceData}
 directly translate to
-groups defined in netCDF files, making the storage of \texttt{InferenceData}
+groups defined in netCDF files, making their storage
 as netCDF files straightforward. The full schema specification
-can be found on ArviZ
-documentation\footnote{\url{https://arviz-devs.github.io/arviz/schema/schema.html}}.
+can be found in \href{https://arviz-devs.github.io/arviz/schema/schema.html}{ArviZ
+documentation}\footnote{\url{https://arviz-devs.github.io/arviz/schema/schema.html}}.
 
 \texttt{InferenceData} objects are central to ArviZ, most ArviZ functions
 take \texttt{InferenceData} as input. Therefore, we provide native functions
@@ -144,7 +152,7 @@ Natively supported libraries are PyStan, CmdStan and CmdStanPy
 PyMC3~\cite{pymc32016}, Pyro and NumPyro~\cite{pyro2018},
 emcee~\cite{emcee2013, emcee2019} and
 TensorFlow Probability~\cite{tensorflow_probability2017}. In addition, there
-is also a function to convert dictionaries to \texttt{InferenceData}.
+is also a function to convert dictionaries of NumPy arrays to \texttt{InferenceData}.
 
 \begin{table}[!ht]
   \caption{ArviZ converter functions summary}\label{tab:from_xyz}
@@ -169,36 +177,38 @@ is also a function to convert dictionaries to \texttt{InferenceData}.
 \end{tabular}
 \end{table}
 
-We are still working on the \texttt{InferenceData} scheme with two main goals
-in mind, support the storage of predictions, and storage of the arguments used
-when calling the sampler as well as the kind of sampler. This latter goal
-would allow to reproduce the sampling given the \texttt{InferenceData} object.
+Future design goals of \texttt{InferenceData} include two main goals:
+support the storage of predictions, and storage of the arguments used
+when calling the sampler as well as the kind of sampler. The latter goal
+would allow reproducible sampling given the \texttt{InferenceData} object.
 
 \section{Statistics and diagnostics}\label{sec:stats}
 ArviZ includes many statistics and diagnostics for Bayesian
-analysis such as the Gelman-Rubin statistic~\cite{gelman1992rhat} or the
-widely applicable Information Criterion~\cite{watanabe2010waic}.
+analysis such as the $\hat{R}$ statistic~\cite{gelman1992rhat, vehtari2019rank} or the
+widely applicable information criterion~\cite{watanabe2010waic}.
 We strive to provide sensible defaults for all algorithms and to
-keep them up to date with the latest publications. Moreover,
-Numba~\cite{lam2015numba} is used to
-speed up lengthy calculations.
+keep them up to date with the latest publications. Moreover, when installed,
+Numba~\cite{lam2015numba} is optionally used to
+speed up expensive calculations.
 
 \subsection{Diagnostics}
 Many convergence assessment functions are available in ArviZ.
-\texttt{az.rhat}, \texttt{az.ess} and \texttt{az.mcse}
-implement the Gelman-Rubin statistic, effective sample size and Monte Carlo
+\texttt{rhat}, \texttt{ess} and \texttt{mcse}
+implement the $\hat{R}$ statistic, effective sample size and Monte Carlo
 standard error respectively \cite{gelman1992rhat, gelman2013bayesian}. % chktex 2
 The improvements in \citet{vehtari2019rank} have already been added to
-ArviZ and have been made the default for all 3 functions. Moreover, all 3 functions take
+ArviZ and have been made the default for all three functions. Moreover, all
+three functions take
 as input a method to choose between the available versions of the algorithms.
 For example, the effective sample size can be calculated for the bulk or for
 quantiles and with or without rank normalization.
-\texttt{az.bfmi} can be used to calculate Bayesian fraction
-of missing information~\cite{betancourt2016diagnosing}. \texttt{az.geweke}
-implements the z-scores for convergence diagnostics~\cite{geweke1991evaluating}.
+The \texttt{bfmi} function can be used to calculate Bayesian fraction
+of missing information~\cite{betancourt2016diagnosing}, and the \texttt{geweke} function
+implements z-scores for convergence diagnostics~\cite{geweke1991evaluating}.
 
-An \texttt{az.summary} function is also provided for convenience to calculate
-several diagnostics toghether with statistics such as mean or variance.
+A \texttt{summary} function is also provided for convenience to calculate
+several diagnostics toghether with some statistics such as mean, standard deviation
+or highest posterior density intervals.
 Its output can be directly printed in a readable manner.
 
 \subsection{Model comparison}
@@ -206,44 +216,51 @@ ArviZ also provides functions for model comparison using the predictive
 accuracy as metric. Given that ArviZ is intended to analysis of Bayesian
 inference results and it aims to extend best practices, only the fully
 Bayesian algorithms have been implemented~\cite{gelman2014understanding}.
-\texttt{az.waic} computes the
-widely applicable information criterion~\cite{watanabe2010waic} and
-\texttt{az.loo} computes the leave one out cross validation using Pareto
+The \texttt{waic} function computes the
+widely applicable information criterion~\cite{watanabe2010waic}, and the
+\texttt{loo} function computes the leave one out cross validation using Pareto
 smoothed importance sampling~\cite{vehtari2015pareto, vehtari2017practical}.
 
-\texttt{az.compare} can be used to compute the WAIC or LOO value for several
+For iterative model building, the \texttt{compare} function can be used
+to compute the WAIC or LOO value for several
 models at the same time, effectively comparing them in a single line of code.
 
 \subsection{Model checking}
-One algorithm for model checking, \texttt{az.loo\_pit}, has also been implemented
-recently, the leave
+One algorithm for model checking, the \texttt{loo\_pit} function, has also been implemented
+recently: the leave
 one out cross validation probability integral transform
 (LOO-PIT)~\cite{gabry2019visualization}. This has been possible thanks to the
 versatility of \texttt{InferenceData}, which contains all the quantities
 needed for this calculation: observed data, posterior predictive samples and
 log likelihood data. It should be noted that the LOO-PIT result is generally
-analyzed visually in a qualitative way. This can alse be done in ArviZ using
+analyzed visually in a qualitative way. This can also be done in ArviZ using
 native plotting functions.
 
-In addition, the results from \texttt{az.loo} and
-\texttt{az.waic} can also be used for model checking to some extent.
+In addition, the results from \texttt{loo} and
+\texttt{waic} functions can also be used for model checking to some extent.
 
 \section{Data visualization}\label{sec:plots}
 Many of the algorithms described in Section~\ref{sec:stats} have complemetary
 plots that extend them and ease their interpretability. Some
-examples are \texttt{az.plot\_compare}, \texttt{az.plot\_loo\_pit} or
-\texttt{az.plot\_ess} which complement the algorithms of the same name, but
-also \texttt{az.plot\_khat} to complement \texttt{az.loo} or
-\texttt{az.plot\_elpd} to complement either \texttt{az.waic} or
-\texttt{az.loo}.
+examples are \texttt{plot\_compare}, \texttt{plot\_loo\_pit} or
+\texttt{plot\_ess} which complement the algorithms of the same name, but
+also \texttt{plot\_khat} to complement \texttt{loo}, or
+\texttt{plot\_elpd} to complement either \texttt{waic} or
+\texttt{loo}.
 
-ArviZ provides plotting functions suited for many different tasks:
+ArviZ provides plotting functions suited to many different tasks:
 visualization of probabiliy distributions, model checking, convergence
-diagnostics or model comparison. The
+diagnostics, or model comparison. The
 documentation contains an
-\href{https://arviz-devs.github.io/arviz/examples/index.html}{example gallery}
+\href{https://arviz-devs.github.io/arviz/examples/index.html}{example
+gallery}\footnote{\url{https://arviz-devs.github.io/arviz/examples/index.html}}
 showcasing all plots currently available in ArviZ. Figure~\ref{fig:examples}
 shows some of the recently added plots.
+
+Additionally, the plots may use either Matplotlib~\cite{Hunter2007matplotlib},
+which is versatile and well
+tested, especially for preparing static plots, or Bokeh~\cite{bokeh}, which allows for
+interactivity and web-based graphics.
 
 \begin{figure}[!htb]
 \centering
@@ -279,11 +296,12 @@ work on ArviZ between May and August 2019.
 \begin{acks}
   We would like to acknowledge all the comunities involved in ArviZ
   development ---especially Adrian Seyboldt, Junpeng Lao,
-  Thomas Wiecki and Robert Goldman from the PyMC community, Allen Riddell and
-  Aki Vehtari from the Stan community and Du Phan from the Pyro community.
-  We also would like to thank everyone who contributed to ArviZ sending pull
-  requests or posting issues, and the contributors of the libraries used to
-  build ArviZ ---particularly xarray, matplotlib, bokeh and numpy.
+  Thomas Wiecki, and Robert Goldman from the PyMC community, Allen Riddell and
+  Aki Vehtari from the Stan community, and Du Phan from the Pyro community.
+  We also would like to thank everyone who contributed to ArviZ by sending pull
+  requests or posting issues ---especially Aniruddha Banerjea for his work
+  during Google Summer of Code---, and the contributors of the libraries used to
+  build ArviZ ---particularly xarray, Matplotlib, Bokeh, and NumPy.
 \end{acks}
 
 \bibliographystyle{acm-reference-format}
