@@ -25,10 +25,10 @@
 \author{Oriol Abril}
 \orcid{0000-0002-1847-9481} % chktex 8
 \affiliation{%
-  \institution{Universitat Pompeu Fabra}
+  % \institution{Universitat Pompeu Fabra}
   % \department{Department of Brain and Cognitive Sciences}
   %\streetaddress{43 Vassar St}
-  \city{Barcelona}
+  % \city{Barcelona}
   %\state{MA}
   %\postcode{02139}
   %\country{USA}
@@ -37,31 +37,31 @@
 
 \author{Colin Carroll}
 %\orcid{1234-5678-9012-3456}
-% \affiliation{%
+\affiliation{%
 %   \institution{Charles River Analytics}
   %\streetaddress{625 Mt Auburn St #3}
   %\city{Cambridge}
   %\state{MA}
   %\postcode{02138}
   %\country{USA}
-% }
+}
 % \email{apfeffer@cra.com}
 
 \author{Ari Hartikainen}
 %\orcid{1234-5678-9012-3456}
-% \affiliation{%
+\affiliation{%
 %   \institution{Oracle Labs}
   %\streetaddress{15 Network Dr}
   %\city{Burlington}
   %\state{MA}
   %\postcode{01803}
   %\country{USA}
-% }
-% \email{jean.baptiste.tristan@oracle.com}
+}
+\email{ari.hartikainen@aalto.fi}
 
 \author{Ravin Kumar}
 %\orcid{1234-5678-9012-3456}
-% \affiliation{%
+\affiliation{%
 %   \institution{Northeastern University}
 %   \department{Khoury College of Computer Sciences}
   %\streetaddress{360 Huntington Ave}
@@ -69,8 +69,8 @@
   % \state{MA}
   %\postcode{02115}
   % \country{USA}
-% }
-% \email{j.vandemeent@northeastern.edu}
+}
+\email{RavinKumar@gmail.com}
 
 \author{Osvaldo Martin}
 \affiliation{
@@ -79,6 +79,7 @@
   \country{Argentina}
 }
 \email{aloctavodia@gmail.com}
+% conflict of interest: @unsl.edu.ar, @conicet.gov.ar
 
 \begin{abstract}
   In recent years, many libraries have been built to specify probabilistic models
@@ -89,7 +90,12 @@
   libraries, calculate relevant diagnostics, or perform model checking.
   We therefore hope ArviZ will become a key tool in Bayesian analysis by
   providing users with computational tools to analyze and explore their results, and to
-  compare between different probabilistic programming libraries.
+  compare across different probabilistic programming libraries (PPL).
+  By unifying the common pre and post modeling toolset the workflow is simpler
+  for both PPL designers and Bayesian practitioners. For practitioners it
+  simplifies the steps after inference. For PPL designers it allows them to
+  focus on building their modeling langauge and inference, and deferring
+  pre and post inference tasks to ArviZ
 \end{abstract}
 
 \maketitle
@@ -110,8 +116,8 @@ Following the structure of ArviZ's source code itself, this
 paper divides these tasks into 3 categories, each of which has its own
 section. Section~\ref{sec:data} is about data storage of Bayesian inference
 results.
-Section~\ref{sec:stats}~ outlines the statistical and diagnostic algorithms
-provided by ArviZ, while section~\ref{sec:plots} provides an overview of
+Section~\ref{sec:stats}~outlines the statistical and diagnostic algorithms
+provided by ArviZ, while Section~\ref{sec:plots} provides an overview of
 plotting functions implemented in ArviZ.
 
 \section{Data storage schema}\label{sec:data}
@@ -158,7 +164,7 @@ is also a function to convert dictionaries of NumPy arrays to \texttt{InferenceD
   \caption{ArviZ converter functions summary}\label{tab:from_xyz}
   \begin{tabular}{ccccc}
     \toprule
-    Inference Library&Sampler Stats&Posterior predictive&Observed data&Prior\\
+    Inference library&Sampler stats&Posterior predictive&Observed data&Prior\\
     \midrule
     PyStan, CmdStan, CmdStanPy & \faCheck{} & \faCheck{} & \faCheck{} & \faCheck{} \\
     PyMC3 & \faCheck{} & \faCheck{} & \faCheck{} & \faCheck{} \\
@@ -171,14 +177,15 @@ is also a function to convert dictionaries of NumPy arrays to \texttt{InferenceD
   anything, so it is up to the user to customize them properly}
           & Limited\footnotemark[\value{footnote}]
           & \faCheck{} & \faTimes{} \\
-    tensorflow probability & Limited\footnote{Only log likelihood data is
+    TensorFlow Probability & Limited\footnote{Only log likelihood data is
     retrieved} & \faCheck{} & \faCheck{} & \faTimes{} \\
   \bottomrule
 \end{tabular}
 \end{table}
 
 Future design goals of \texttt{InferenceData} include two main goals:
-support the storage of predictions, and storage of the arguments used
+support the storage of out-of-sample posterior predictive samples,
+and storage of the arguments used
 when calling the sampler as well as the kind of sampler. The latter goal
 would allow reproducible sampling given the \texttt{InferenceData} object.
 
@@ -207,7 +214,7 @@ of missing information~\cite{betancourt2016diagnosing}, and the \texttt{geweke} 
 implements z-scores for convergence diagnostics~\cite{geweke1991evaluating}.
 
 A \texttt{summary} function is also provided for convenience to calculate
-several diagnostics toghether with some statistics such as mean, standard deviation
+several diagnostics together with some statistics such as mean, standard deviation
 or highest posterior density intervals.
 Its output can be directly printed in a readable manner.
 
@@ -291,7 +298,8 @@ interactivity and web-based graphics.
 \section*{Funding}
 Work by Osvaldo Martin was supported by CONICET-Argentina and ANPCyT-Argentina
 (PICT-0218). Two students were funded by the Google Summer of Code project to
-work on ArviZ between May and August 2019.
+work on ArviZ between May and August 2019. In addition, a NumFOCUS small
+development grant was awarded to ArviZ.
 
 \begin{acks}
   We would like to acknowledge all the comunities involved in ArviZ
@@ -301,7 +309,8 @@ work on ArviZ between May and August 2019.
   We also would like to thank everyone who contributed to ArviZ by sending pull
   requests or posting issues ---especially Aniruddha Banerjea for his work
   during Google Summer of Code---, and the contributors of the libraries used to
-  build ArviZ ---particularly xarray, Matplotlib, Bokeh, and NumPy.
+  build ArviZ ---particularly xarray, Matplotlib, Bokeh, pandas, and NumPy. We
+  also thank NumFOCUS for supporting ArviZ as an affiliated project.
 \end{acks}
 
 \bibliographystyle{acm-reference-format}
