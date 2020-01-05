@@ -36,7 +36,7 @@
 \email{oriol.abril.pla@gmail.com}
 
 \author{Colin Carroll}
-%\orcid{1234-5678-9012-3456}
+\orcid{0000-0001-6977-0861}  % chktex 8
 \affiliation{%
 %   \institution{Charles River Analytics}
   %\streetaddress{625 Mt Auburn St #3}
@@ -48,7 +48,7 @@
 % \email{apfeffer@cra.com}
 
 \author{Ari Hartikainen}
-%\orcid{1234-5678-9012-3456}
+\orcid{0000-0002-4569-569X}  % chktex 8
 \affiliation{%
 %   \institution{Oracle Labs}
   %\streetaddress{15 Network Dr}
@@ -60,7 +60,7 @@
 \email{ari.hartikainen@aalto.fi}
 
 \author{Ravin Kumar}
-%\orcid{1234-5678-9012-3456}
+\orcid{0000-0003-0501-6098}  % chktex 8
 \affiliation{%
 %   \institution{Northeastern University}
 %   \department{Khoury College of Computer Sciences}
@@ -73,6 +73,7 @@
 \email{RavinKumar@gmail.com}
 
 \author{Osvaldo Martin}
+\orcid{0000-0001-7419-8978} % chktex 8
 \affiliation{
   \institution{Instituto de Matem\'atica Aplicada San Luis, UNSL-CONICET}
   \city{San Luis}
@@ -84,9 +85,10 @@
 \begin{abstract}
   In recent years, many libraries have been built to specify probabilistic models
   as executable code. ArviZ proposes the use of a common data structure called
-  \texttt{InferenceData} to ease and unify common types of analysese of these models. To this end,
-  ArviZ converts results from several libraries to
-  \texttt{InferenceData}. It also provides functions to flexibly plot the results using different
+  \texttt{InferenceData} to ease and unify common types of analyses of these models.
+  To this end, ArviZ converts results from several libraries to
+  \texttt{InferenceData} objects. It also provides functions to flexibly plot the
+  results using different
   libraries, calculate relevant diagnostics, or perform model checking.
   We therefore hope ArviZ will become a key tool in Bayesian analysis by
   providing users with computational tools to analyze and explore their results, and to
@@ -95,7 +97,7 @@
   for both PPL designers and Bayesian practitioners. For practitioners it
   simplifies the steps after inference. For PPL designers it allows them to
   focus on building their modeling langauge and inference, and deferring
-  pre and post inference tasks to ArviZ
+  pre and post inference tasks to ArviZ.
 \end{abstract}
 
 \maketitle
@@ -124,13 +126,22 @@ plotting functions implemented in ArviZ.
 One of ArviZ's key features is its data storage schema. Our goal is to define
 a storage schema compatible
 with netCDF~\cite{unidata2011network}. This data structure, called
-\texttt{InferenceData}, should contain all
+\texttt{InferenceData}, should eventually contain all
 relevant information to perform diagnostics on the inference run or to reproduce
 it.
+
 \texttt{InferenceData} objects (built on
-top of xarray~\cite{hoyer2017xarray}) contains several groups, each of which is
+top of xarray~\cite{hoyer2017xarray}) contain several groups, each of which is
 a multidimensional labeled array with one or more data variables
 (Figure~\ref{fig:data}).
+These groups contain data related to a specific collection such as \emph{posterior},
+\emph{observed data}, or \emph{sampler stats} (sampler quantities like
+divergences, tree depth, or log likelihood). Groups in \texttt{InferenceData}
+objects directly translate to
+groups defined in netCDF files, making their storage
+as netCDF files straightforward. The full schema specification
+can be found in \href{https://arviz-devs.github.io/arviz/schema/schema.html}{ArviZ's
+documentation}\footnote{\url{https://arviz-devs.github.io/arviz/schema/schema.html}}.
 
 \begin{figure}[!hbt]
   \centering
@@ -138,15 +149,6 @@ a multidimensional labeled array with one or more data variables
   \caption{Visual representation of the \texttt{InferenceData}
   structure.}\label{fig:data}
 \end{figure}
-
-These groups contain data related to a specific collection such as \emph{posterior},
-\emph{observed data}, or \emph{sampler stats} (sampler quantities like
-divergences, tree depth, or log likelihood). Groups in \texttt{InferenceData}
-directly translate to
-groups defined in netCDF files, making their storage
-as netCDF files straightforward. The full schema specification
-can be found in \href{https://arviz-devs.github.io/arviz/schema/schema.html}{ArviZ's
-documentation}\footnote{\url{https://arviz-devs.github.io/arviz/schema/schema.html}}.
 
 \texttt{InferenceData} objects are central to ArviZ, most ArviZ functions
 take \texttt{InferenceData} as input. Therefore, we provide functions
