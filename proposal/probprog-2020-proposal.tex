@@ -103,7 +103,7 @@
 \section{Introduction}
 The growth of both probabilistic programming languages and algorithms for the
 analysis of Bayesian inference results led to the introduction of the Python
-library ArviZ~\cite{arviz2019}. Outside inference itself and sampling, ArviZ covers
+library ArviZ~\cite{arviz2019}. Outside inference itself, ArviZ covers
 all the other aspects of Bayesian analysis. These tasks ---such as diagnoses of
 the quality of the inference, model criticism or preparation of the results
 for a particular audience--- are also key to the modelling process and
@@ -127,9 +127,9 @@ with netCDF~\cite{unidata2011network}. This data structure, called
 \texttt{InferenceData}, should contain all
 relevant information to perform diagnostics on the inference run or to reproduce
 it.
-\texttt{InferenceData} (built on
+\texttt{InferenceData} objects (built on
 top of xarray~\cite{hoyer2017xarray}) contains several groups, each of which is
-a multidimensional labeled array with one or several data variables
+a multidimensional labeled array with one or more data variables
 (Figure~\ref{fig:data}).
 
 \begin{figure}[!hbt]
@@ -145,11 +145,11 @@ divergences, tree depth, or log likelihood). Groups in \texttt{InferenceData}
 directly translate to
 groups defined in netCDF files, making their storage
 as netCDF files straightforward. The full schema specification
-can be found in \href{https://arviz-devs.github.io/arviz/schema/schema.html}{ArviZ
+can be found in \href{https://arviz-devs.github.io/arviz/schema/schema.html}{ArviZ's
 documentation}\footnote{\url{https://arviz-devs.github.io/arviz/schema/schema.html}}.
 
 \texttt{InferenceData} objects are central to ArviZ, most ArviZ functions
-take \texttt{InferenceData} as input. Therefore, we provide native functions
+take \texttt{InferenceData} as input. Therefore, we provide functions
 to convert between the outputs of several inference libraries and
 \texttt{InferenceData}. Table~\ref{tab:from_xyz} shows the state of
 converter functions in ArviZ beta release 0.6.1 (latest release to date).
@@ -219,9 +219,9 @@ or highest posterior density intervals.
 Its output can be directly printed in a readable manner.
 
 \subsection{Model comparison}
-ArviZ also provides functions for model comparison using the predictive
+ArviZ also provides functions for model comparison using predictive
 accuracy as metric. Given that ArviZ is intended to analysis of Bayesian
-inference results and it aims to extend best practices, only the fully
+inference results and it aims to extend best practices, only fully
 Bayesian algorithms have been implemented~\cite{gelman2014understanding}.
 The \texttt{waic} function computes the
 widely applicable information criterion~\cite{watanabe2010waic}, and the
