@@ -38,24 +38,22 @@
 \author{Colin Carroll}
 \orcid{0000-0001-6977-0861}  % chktex 8
 \affiliation{%
-%   \institution{Charles River Analytics}
+  \institution{PyMC3}
   %\streetaddress{625 Mt Auburn St #3}
   %\city{Cambridge}
   %\state{MA}
   %\postcode{02138}
   %\country{USA}
 }
-% \email{apfeffer@cra.com}
+\email{colcarroll@gmail.com}
 
 \author{Ari Hartikainen}
 \orcid{0000-0002-4569-569X}  % chktex 8
 \affiliation{%
-%   \institution{Oracle Labs}
-  %\streetaddress{15 Network Dr}
-  %\city{Burlington}
-  %\state{MA}
-  %\postcode{01803}
-  %\country{USA}
+  \institution{Aalto University}
+  \department{Department of Civil Engineering}
+  \city{Espoo}
+  \country{Finland}
 }
 \email{ari.hartikainen@aalto.fi}
 
@@ -93,10 +91,10 @@
   We therefore hope ArviZ will become a key tool in Bayesian analysis by
   providing users with computational tools to analyze and explore their results, and to
   compare across different probabilistic programming libraries (PPL).
-  By unifying the common pre and post modeling toolset the workflow is simpler
+  By unifying the common pre and post modelling toolset the workflow is simpler
   for both PPL designers and Bayesian practitioners. For practitioners it
   simplifies the steps after inference. For PPL designers it allows them to
-  focus on building their modeling langauge and inference, and deferring
+  focus on building their modelling langauge and inference, and deferring
   pre and post inference tasks to ArviZ.
 \end{abstract}
 
@@ -136,7 +134,7 @@ a multidimensional labeled array with one or more data variables
 (Figure~\ref{fig:data}).
 These groups contain data related to a specific collection such as \emph{posterior},
 \emph{observed data}, or \emph{sampler stats} (sampler quantities like
-divergences, tree depth, or log likelihood). Groups in \texttt{InferenceData}
+divergence, tree depth, and log likelihood). Groups in \texttt{InferenceData}
 objects directly translate to
 groups defined in netCDF files, making their storage
 as netCDF files straightforward. The full schema specification
@@ -154,7 +152,7 @@ documentation}\footnote{\url{https://arviz-devs.github.io/arviz/schema/schema.ht
 take \texttt{InferenceData} as input. Therefore, we provide functions
 to convert between the outputs of several inference libraries and
 \texttt{InferenceData}. Table~\ref{tab:from_xyz} shows the state of
-converter functions in ArviZ beta release 0.6.1 (latest release to date).
+converter functions in ArviZ beta release 0.6.1 (released in December 2019).
 Natively supported libraries are PyStan, CmdStan and CmdStanPy
 \cite{stan2018language, stan2018math, stan2018core, pystan2018}, % chktex 2
 PyMC3~\cite{pymc32016}, Pyro and NumPyro~\cite{pyro2018},
@@ -185,7 +183,7 @@ is also a function to convert dictionaries of NumPy arrays to \texttt{InferenceD
 \end{tabular}
 \end{table}
 
-Future design goals of \texttt{InferenceData} include two main goals:
+Future design goals for \texttt{InferenceData} include two main goals:
 support the storage of out-of-sample posterior predictive samples,
 and storage of the arguments used
 when calling the sampler as well as the kind of sampler. The latter goal
@@ -209,7 +207,7 @@ The improvements in \citet{vehtari2019rank} have already been added to
 ArviZ and have been made the default for all three functions. Moreover, all
 three functions take
 as input a method to choose between the available versions of the algorithms.
-For example, the effective sample size can be calculated for the bulk or for
+For example, the effective sample size can be calculated for the bulk, tail or for
 quantiles and with or without rank normalization.
 The \texttt{bfmi} function can be used to calculate Bayesian fraction
 of missing information~\cite{betancourt2016diagnosing}, and the \texttt{geweke} function
@@ -243,13 +241,15 @@ versatility of \texttt{InferenceData}, which contains all the quantities
 needed for this calculation: observed data, posterior predictive samples and
 log likelihood data. It should be noted that the LOO-PIT result is generally
 analyzed visually in a qualitative way. This can also be done in ArviZ using
-native plotting functions.
+native plotting functions. Figure~\ref{fig:loo_pit} shows the difference
+between the empirical cumulative density function (CDF) of the LOO-PIT values
+and the CDF of a uniform distribution.
 
 In addition, the results from \texttt{loo} and
 \texttt{waic} functions can also be used for model checking to some extent.
 
 \section{Data visualization}\label{sec:plots}
-Many of the algorithms described in Section~\ref{sec:stats} have complemetary
+Many of the algorithms described in Section~\ref{sec:stats} have complementary
 plots that extend them and ease their interpretability. Some
 examples are \texttt{plot\_compare}, \texttt{plot\_loo\_pit} or
 \texttt{plot\_ess} which complement the algorithms of the same name, but
@@ -283,9 +283,10 @@ interactivity and web-based graphics.
   \begin{subfigure}{.47\textwidth}
   \centering
     \includegraphics[width=\linewidth]{plot_loo_pit.png}
-    \caption{LOO-PIT values estimated probabiliy density function. Differing
+    \caption{Difference between LOO-PIT empirical CDF and a uniform
+      distribution. Differing
       from a uniform distribution indicates model
-      mispecification~\cite{gabry2019visualization}.}
+      mispecification~\cite{gabry2019visualization}.}\label{fig:loo_pit}
   \end{subfigure}\\
   \begin{subfigure}{0.98\textwidth}
   \centering
@@ -304,7 +305,7 @@ work on ArviZ between May and August 2019. In addition, a NumFOCUS small
 development grant was awarded to ArviZ.
 
 \begin{acks}
-  We would like to acknowledge all the comunities involved in ArviZ
+  We would like to acknowledge all the communities involved in ArviZ
   development ---especially Adrian Seyboldt, Junpeng Lao,
   Thomas Wiecki, and Robert Goldman from the PyMC community, Allen Riddell and
   Aki Vehtari from the Stan community, and Du Phan from the Pyro community.
