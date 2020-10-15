@@ -277,3 +277,5 @@ TSWLatexianTemp*
 
 # jupyter
 .ipynb_checkpoints/
+
+*.nc
