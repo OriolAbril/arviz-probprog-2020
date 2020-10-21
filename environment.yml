@@ -1,0 +1,10 @@
+name: probprob-poster
+channels:
+  - conda-forge
+dependencies:
+  - numpy
+  - matplotlib
+  - pandas
+  - pymc3
+  - pystan
+  - arviz
