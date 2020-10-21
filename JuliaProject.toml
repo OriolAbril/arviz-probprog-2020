@@ -2,6 +2,8 @@
 ArviZ = "131c737c-5715-5e2e-ad31-c244f01c1dc7"
 Soss = "8ce77f84-9b61-11e8-39ff-d17a774bf41c"
 JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+NamedTupleTools = "d9ec5142-1e00-5aa0-9d6a-321866360f50"
 
 [compat]
 julia = "1.5"
