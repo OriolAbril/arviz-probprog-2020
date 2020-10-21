@@ -8,3 +8,4 @@ dependencies:
   - pymc3
   - pystan
   - arviz
+  - ujson
