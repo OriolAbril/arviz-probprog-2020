@@ -1,4 +1,4 @@
 #!/bin/bash
 set -ex
 
-julia --project -e 'println(get(ENV, "BLAH", "")); using PyCall; println(PyCall.python)'
+julia --project -e 'println(get(ENV, "PYTHON", "")); using PyCall; println(PyCall.python)'
